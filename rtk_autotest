@@ -104,7 +104,7 @@ def test_petfriends_negative(web_browser):
     )
 
     # Введите некорректный email и password
-    email = "invalid_email@example.com"
+    email = "invalid_email"
     password = "invalid_password"
 
     # Введите значения в поля email и password
