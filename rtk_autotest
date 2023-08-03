@@ -1,0 +1,89 @@
+import time
+import re
+import pytest
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
+@pytest.fixture(scope="session")
+def web_browser():
+    # Инициализация веб-драйвера
+    driver = webdriver.Chrome()
+    # Максимальное время ожидания элемента на странице
+    driver.implicitly_wait(10)
+    # Размер окна браузера
+    driver.maximize_window()
+    # Возврат объекта драйвера
+    yield driver
+    # Закрытие браузера после завершения тестов
+    driver.quit()
+
+
+def test_petfriends(web_browser):
+    web_browser.get("https://b2c.passport.rt.ru/auth")
+
+    # Явное ожидание появления элемента email_input
+    email_input = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_element_located((By.ID, "username"))
+    )
+
+    # Введите ваш email и password здесь
+    email = "estragox@gmail.com"
+    password = "QweszxC007"
+
+    # Введите значения в поля email и password
+    email_input.send_keys(email)
+
+    # Явное ожидание появления элемента password_input
+    password_input = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_element_located((By.ID, "password"))
+    )
+    password_input.send_keys(password)
+
+    # Найдите и нажмите на кнопку "Войти"
+    login_button = web_browser.find_element(By.ID, "kc-login")
+    login_button.click()
+
+    # Проверьте совпадение части URL после входа
+    expected_url_part = "https://b2c.passport.rt.ru/account_b2c"
+    assert expected_url_part in web_browser.current_url, f"Не удалось выполнить успешный переход на страницу {expected_url_part}"
+
+    # Найдите и нажмите на кнопку "Выйти" (выход из личного кабинета)
+    logout_button = WebDriverWait(web_browser, 10).until(
+        EC.element_to_be_clickable((By.ID, "logout-btn"))
+    )
+    logout_button.click()
+
+
+def test_petfriends_by_phone(web_browser):
+    web_browser.get("https://b2c.passport.rt.ru/auth")
+
+    # Явное ожидание появления элемента phone_input
+    phone_input = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_element_located((By.ID, "username"))
+    )
+
+    # Введите ваш номер телефона и password здесь
+    phone = "+79178563120"
+    password = "QweszxC007"
+
+    # Введите значения в поля номера телефона ие password
+    phone_input.send_keys(phone)
+
+    # Явное ожидание появления элемента password_input
+    password_input = WebDriverWait(web_browser, 30).until(
+        EC.presence_of_element_located((By.ID, "password"))
+    )
+    password_input.send_keys(password)
+
+    # Найдите и нажмите на кнопку "Войти"
+    login_button = WebDriverWait(web_browser, 30).until(
+        EC.element_to_be_clickable((By.ID, "kc-login"))
+    )
+    login_button.click()
+
+    # Проверьте совпадение части URL после входа
+    expected_url_part = "https://b2c.passport.rt.ru/account_b2c"
+    assert expected_url_part in web_browser.current_url, f"Не удалось выполнить успешный переход на страницу {expected_url_part}"
